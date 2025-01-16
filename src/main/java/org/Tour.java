@@ -17,8 +17,7 @@ public class Tour {
         System.out.print("Please choose: ");
         choice = s.nextInt();
         switch(choice) {
-            case 0:
-                break;
+
         }
     }
 }
