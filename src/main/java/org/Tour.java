@@ -74,6 +74,14 @@ public class Tour {
         }
     }
 
+    public void editTour() {
+
+    }
+
+    public void deleteTour() {
+
+    }
+
     public void tourManagement() {
         int choice;
         do {
