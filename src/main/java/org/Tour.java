@@ -2,6 +2,7 @@ package org;
 
 import com.mysql.jdbc.Driver;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -79,7 +80,39 @@ public class Tour {
     }
 
     public void deleteTour() {
+        System.out.println("");
+    }
 
+    public void showTour() {
+        try {
+            connection = DriverManager.getConnection(connect, username, password);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT * FROM tours");
+            while (rs.next()) {
+                System.out.println(
+                        "ID"
+                        + " " + "Tour name"
+                        + " " + "Location"
+                        + " " + "Price"
+                        + " " + "Tour days"
+                        + " " + "Start date"
+                        + " " + "End date"
+                        + " " + "Status"
+                );
+                System.out.println(
+                        rs.getString(1)
+                        + " " + rs.getString(2)
+                        + " " + rs.getString(3)
+                        + " " + rs.getDouble(4)
+                        + " " + rs.getInt(5)
+                        + " " + rs.getDate(6)
+                        + " " + rs.getDate(7)
+                        + " " + rs.getInt(8)
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void tourManagement() {
@@ -97,6 +130,13 @@ public class Tour {
             switch(choice) {
                 case 1:
                     infoTour();
+                case 2:
+                    editTour();
+                case 3:
+                    deleteTour();
+                case 4:
+                    showTour();
+
             }
         } while(choice != 0);
     }
