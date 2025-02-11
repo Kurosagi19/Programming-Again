@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 public class Tour {
 
+    Scanner s = new Scanner(System.in);
+
     // Tạo thành phần kết nối cơ sở dữ liệu
     public String connect = "jdbc:mysql://localhost:3306/tourmgr";
     public String username = "root";
@@ -48,12 +50,11 @@ public class Tour {
     }
     // Thêm bản ghi
     public void infoTour() {
-        Scanner s = new Scanner(System.in);
         System.out.println("Input number of tour: ");
         int n = s.nextInt();
         s.nextLine();
         for (int i = 0; i < n; i++) {
-            System.out.println("Input tour number " + (i + 1) + ": ");
+            System.out.print("Input tour number " + (i + 1) + ": ");
             System.out.print("Input tour code: ");
             String tour_code = s.nextLine();
             System.out.print("Input tour name: ");
@@ -76,11 +77,29 @@ public class Tour {
     }
 
     public void editTour() {
+        try {
+            // Thiết lập kết nối đến database
+            connection = DriverManager.getConnection(connect, username, password);
+            Statement statement = connection.createStatement();
+
+            showTour();
+
+            System.out.print("Enter tour id you want to edit: ");
+            String edit_tour = s.nextLine();
+
+            ResultSet rs = statement.executeQuery("SELECT * FROM tours WHERE tour_code = " + edit_tour);
+            System.out.println(rs.next());
+        } catch (Exception e) {
+            System.out.println("Cannot find that id!");
+            e.printStackTrace();
+        }
 
     }
 
     public void deleteTour() {
-        System.out.println("");
+        showTour();
+        System.out.print("Enter tour id you want to delete: ");
+        String del_tour = s.nextLine();
     }
 
     public void showTour() {
@@ -88,17 +107,17 @@ public class Tour {
             connection = DriverManager.getConnection(connect, username, password);
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM tours");
+            System.out.println(
+                    "ID"
+                            + " " + "Tour name"
+                            + " " + "Location"
+                            + " " + "Price"
+                            + " " + "Tour days"
+                            + " " + "Start date"
+                            + " " + "End date"
+                            + " " + "Status"
+            );
             while (rs.next()) {
-                System.out.println(
-                        "ID"
-                        + " " + "Tour name"
-                        + " " + "Location"
-                        + " " + "Price"
-                        + " " + "Tour days"
-                        + " " + "Start date"
-                        + " " + "End date"
-                        + " " + "Status"
-                );
                 System.out.println(
                         rs.getString(1)
                         + " " + rs.getString(2)
@@ -130,12 +149,16 @@ public class Tour {
             switch(choice) {
                 case 1:
                     infoTour();
+                    break;
                 case 2:
                     editTour();
+                    break;
                 case 3:
                     deleteTour();
+                    break;
                 case 4:
                     showTour();
+                    break;
 
             }
         } while(choice != 0);

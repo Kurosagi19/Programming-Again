@@ -17,6 +17,7 @@ public class Main {
             switch(choice) {
                 case 1:
                     tour.tourManagement();
+                    break;
             }
         } while(choice != 0);
     }
