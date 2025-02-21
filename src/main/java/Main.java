@@ -18,6 +18,9 @@ public class Main {
                 case 1:
                     tour.tourManagement();
                     break;
+                case 2:
+                    tour.tourFunction();
+                    break;
             }
         } while(choice != 0);
     }

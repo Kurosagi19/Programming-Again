@@ -19,6 +19,7 @@ public class Tour {
     public String password = "";
     // Tạo thuộc tính kết nối
     public Connection connection;
+
     // Kiểm tra và thực hiện kết nối
     public Tour() {
         try {
@@ -49,6 +50,7 @@ public class Tour {
             e.printStackTrace();
         }
     }
+
     // Thêm bản ghi
     public void addTour() {
         System.out.print("Input number of tour: ");
@@ -114,18 +116,18 @@ public class Tour {
             String sql = "UPDATE tours SET tour_name = ?, location = ?, price = ?, numdaystour = ?, start_date = ?, end_date = ?, status = ? WHERE tour_code = " + edit_tour;
 
             // Cập nhật dữ liệu trong database
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql);
 
-            statement.setString(1, new_tour_name);
-            statement.setString(2, new_location);
-            statement.setDouble(3, new_price);
-            statement.setInt(4, new_numdaystour);
-            statement.setString(5, new_startDate.toString());
-            statement.setString(6, new_endDate.toString());
-            statement.setInt(7, new_status);
+            ps.setString(1, new_tour_name);
+            ps.setString(2, new_location);
+            ps.setDouble(3, new_price);
+            ps.setInt(4, new_numdaystour);
+            ps.setString(5, new_startDate.toString());
+            ps.setString(6, new_endDate.toString());
+            ps.setInt(7, new_status);
 
             // Thực thi UPDATE
-            int rows_affected = statement.executeUpdate();
+            int rows_affected = ps.executeUpdate();
 
             // Kiểm tra kết quả
             if (rows_affected > 0) {
@@ -170,13 +172,13 @@ public class Tour {
             while (rs.next()) {
                 System.out.println(
                         rs.getInt(1)
-                        + " " + rs.getString(2)
-                        + " " + rs.getString(3)
-                        + " " + rs.getDouble(4)
-                        + " " + rs.getInt(5)
-                        + " " + rs.getDate(6)
-                        + " " + rs.getDate(7)
-                        + " " + rs.getInt(8)
+                                + " " + rs.getString(2)
+                                + " " + rs.getString(3)
+                                + " " + rs.getDouble(4)
+                                + " " + rs.getInt(5)
+                                + " " + rs.getDate(6)
+                                + " " + rs.getDate(7)
+                                + " " + rs.getInt(8)
                 );
             }
         } catch (Exception e) {
@@ -184,7 +186,161 @@ public class Tour {
         }
     }
 
-    // Menu
+    // Filter by location
+    public void filterByLocation() {
+        System.out.println("===== FILTER BY LOCATION =====");
+        try {
+            connection = DriverManager.getConnection(connect, username, password);
+
+            System.out.print("Input tour location: ");
+            String filter_location = s.nextLine();
+
+            String sql = "SELECT * FROM tours WHERE location LIKE ?";
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            String search_pattern = "%";
+            ps.setString(1, filter_location);
+            ResultSet rs = ps.executeQuery();
+
+            boolean hasResults = false;
+            System.out.println("\nResult:");
+            while (rs.next()) {
+                hasResults = true;
+                System.out.println(
+                        rs.getInt(1)
+                                + " " + rs.getString(2)
+                                + " " + rs.getString(3)
+                                + " " + rs.getDouble(4)
+                                + " " + rs.getInt(5)
+                                + " " + rs.getDate(6)
+                                + " " + rs.getDate(7)
+                                + " " + rs.getInt(8)
+                );
+            }
+
+            if (!hasResults) {
+                System.out.println("Cannot find any tour with that location!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Filter by number of days in tour
+    public void filterByNumdaystour() {
+        System.out.println("===== FILTER BY NUMBER OF DAYS IN TOUR =====");
+        try {
+            connection = DriverManager.getConnection(connect, username, password);
+
+            System.out.print("Input number of days: ");
+            int filter_numdaystour = s.nextInt();
+
+            String sql = "SELECT * FROM tours WHERE numdaystour LIKE ?";
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            String search_pattern = "%";
+            ps.setInt(1, filter_numdaystour);
+            ResultSet rs = ps.executeQuery();
+
+            boolean hasResults = false;
+            System.out.println("\nResult:");
+            while (rs.next()) {
+                hasResults = true;
+                System.out.println(
+                        rs.getInt(1)
+                                + " " + rs.getString(2)
+                                + " " + rs.getString(3)
+                                + " " + rs.getDouble(4)
+                                + " " + rs.getInt(5)
+                                + " " + rs.getDate(6)
+                                + " " + rs.getDate(7)
+                                + " " + rs.getInt(8)
+                );
+            }
+
+            if (!hasResults) {
+                System.out.println("Cannot find any tour with that number of days!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Filter by price
+    public void filterByPrice() {
+        System.out.println("===== FILTER BY TOUR PRICE =====");
+        try {
+            connection = DriverManager.getConnection(connect, username, password);
+
+            System.out.print("Input tour price: ");
+            double filter_price = s.nextDouble();
+
+            String sql = "SELECT * FROM tours WHERE price LIKE ?";
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            String search_pattern = "%";
+            ps.setDouble(1, filter_price);
+            ResultSet rs = ps.executeQuery();
+
+            boolean hasResults = false;
+            System.out.println("\nResult:");
+            while (rs.next()) {
+                hasResults = true;
+                System.out.println(
+                        rs.getInt(1)
+                                + " " + rs.getString(2)
+                                + " " + rs.getString(3)
+                                + " " + rs.getDouble(4)
+                                + " " + rs.getInt(5)
+                                + " " + rs.getDate(6)
+                                + " " + rs.getDate(7)
+                                + " " + rs.getInt(8)
+                );
+            }
+
+            if (!hasResults) {
+                System.out.println("Cannot find any tour with that price!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Order by price desc
+    public void orderByPriceDesc() {
+        try {
+            connection = DriverManager.getConnection(connect, username, password);
+            String sql = "SELECT * FROM tours ORDER BY price DESC";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            boolean hasResults = false;
+            System.out.println("Results: ");
+            while (rs.next()) {
+                hasResults = true;
+                System.out.println(
+                        rs.getInt(1)
+                                + " " + rs.getString(2)
+                                + " " + rs.getString(3)
+                                + " " + rs.getDouble(4)
+                                + " " + rs.getInt(5)
+                                + " " + rs.getDate(6)
+                                + " " + rs.getDate(7)
+                                + " " + rs.getInt(8)
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Tour Management Menu
     public void tourManagement() {
         int choice;
         do {
@@ -197,7 +353,7 @@ public class Tour {
             System.out.println("0. Return to main menu");
             System.out.print("Please choose: ");
             choice = s.nextInt();
-            switch(choice) {
+            switch (choice) {
                 case 1:
                     addTour();
                     break;
@@ -212,6 +368,37 @@ public class Tour {
                     break;
 
             }
-        } while(choice != 0);
+        } while (choice != 0);
+    }
+
+    // Function Menu
+    public void tourFunction() {
+        int choice;
+        do {
+            Scanner s = new Scanner(System.in);
+            System.out.println("===== Function =====");
+            System.out.println("1. Filter by location");
+            System.out.println("2. Filter by number of days in tour");
+            System.out.println("3. Filter by price");
+            System.out.println("4. Order by price desc");
+            System.out.println("0. Return to main menu");
+            System.out.print("Please choose: ");
+            choice = s.nextInt();
+            switch (choice) {
+                case 1:
+                    filterByLocation();
+                    break;
+                case 2:
+                    filterByNumdaystour();
+                    break;
+                case 3:
+                    filterByPrice();
+                    break;
+                case 4:
+                    orderByPriceDesc();
+                    break;
+
+            }
+        } while (choice != 0);
     }
 }
