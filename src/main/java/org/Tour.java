@@ -1,5 +1,6 @@
 package org;
 
+import com.mysql.cj.jdbc.StatementWrapper;
 import com.mysql.jdbc.Driver;
 
 import javax.swing.plaf.nimbus.State;
@@ -30,11 +31,11 @@ public class Tour {
 
     // Thực hiện truy vấn thêm dữ liệu
     // Thực hiện truy vấn
-    public void insertTour(String tour_code, String tour_name, String location, double price, int numdaystour, String start_date, String end_date, int status) {
+    public void insertTour(int tour_code, String tour_name, String location, double price, int numdaystour, String start_date, String end_date, int status) {
         String sql = "INSERT INTO tours VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, tour_code);
+            statement.setInt(1, tour_code);
             statement.setString(2, tour_name);
             statement.setString(3, location);
             statement.setDouble(4, price);
@@ -49,14 +50,14 @@ public class Tour {
         }
     }
     // Thêm bản ghi
-    public void infoTour() {
-        System.out.println("Input number of tour: ");
+    public void addTour() {
+        System.out.print("Input number of tour: ");
         int n = s.nextInt();
         s.nextLine();
         for (int i = 0; i < n; i++) {
-            System.out.print("Input tour number " + (i + 1) + ": ");
+            System.out.println("=== Input tour number " + (i + 1) + " ===");
             System.out.print("Input tour code: ");
-            String tour_code = s.nextLine();
+            int tour_code = s.nextInt();
             System.out.print("Input tour name: ");
             String tour_name = s.nextLine();
             System.out.print("Input tour location: ");
@@ -76,50 +77,66 @@ public class Tour {
         }
     }
 
+    // Sửa
     public void editTour() {
+        System.out.println("===== UPDATE TOUR =====");
         try {
             // Thiết lập kết nối đến database
             connection = DriverManager.getConnection(connect, username, password);
             Statement statement = connection.createStatement();
-
             showTour();
-
             System.out.print("Enter tour id you want to edit: ");
-            String edit_tour = s.nextLine();
-
+            int edit_tour = s.nextInt();
             ResultSet rs = statement.executeQuery("SELECT * FROM tours WHERE tour_code = " + edit_tour);
-            System.out.println(rs.next());
+            while (rs.next()) {
+                System.out.println(
+                        rs.getInt(1)
+                                + " " + rs.getString(2)
+                                + " " + rs.getString(3)
+                                + " " + rs.getDouble(4)
+                                + " " + rs.getInt(5)
+                                + " " + rs.getDate(6)
+                                + " " + rs.getDate(7)
+                                + " " + rs.getInt(8)
+                );
+            }
         } catch (Exception e) {
-            System.out.println("Cannot find that id!");
             e.printStackTrace();
         }
 
     }
 
+    // Xoá
     public void deleteTour() {
+        System.out.println("===== DELETE TOUR =====");
         showTour();
-        System.out.print("Enter tour id you want to delete: ");
-        String del_tour = s.nextLine();
+        try {
+            connection = DriverManager.getConnection(connect, username, password);
+            PreparedStatement statement = null;
+
+            System.out.print("Enter tour id you want to delete: ");
+            int del_tour = s.nextInt();
+            String sql = ("DELETE FROM tours WHERE tour_code = ?");
+            statement = connection.prepareCall(sql);
+            statement.setInt(1, del_tour);
+            statement.execute();
+            System.out.println("Tour deleted!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
+    // Hiển thị
     public void showTour() {
+        System.out.println("===== SHOW TOUR =====");
         try {
             connection = DriverManager.getConnection(connect, username, password);
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * FROM tours");
-            System.out.println(
-                    "ID"
-                            + " " + "Tour name"
-                            + " " + "Location"
-                            + " " + "Price"
-                            + " " + "Tour days"
-                            + " " + "Start date"
-                            + " " + "End date"
-                            + " " + "Status"
-            );
             while (rs.next()) {
                 System.out.println(
-                        rs.getString(1)
+                        rs.getInt(1)
                         + " " + rs.getString(2)
                         + " " + rs.getString(3)
                         + " " + rs.getDouble(4)
@@ -134,6 +151,7 @@ public class Tour {
         }
     }
 
+    // Menu
     public void tourManagement() {
         int choice;
         do {
@@ -148,7 +166,7 @@ public class Tour {
             choice = s.nextInt();
             switch(choice) {
                 case 1:
-                    infoTour();
+                    addTour();
                     break;
                 case 2:
                     editTour();
