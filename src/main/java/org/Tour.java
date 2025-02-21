@@ -58,6 +58,7 @@ public class Tour {
             System.out.println("=== Input tour number " + (i + 1) + " ===");
             System.out.print("Input tour code: ");
             int tour_code = s.nextInt();
+            s.nextLine();
             System.out.print("Input tour name: ");
             String tour_name = s.nextLine();
             System.out.print("Input tour location: ");
@@ -70,10 +71,10 @@ public class Tour {
             System.out.print("Input tour start date (yyyy-mm-dd): ");
             String start_date = s.nextLine();
             LocalDate startDate = LocalDate.parse(start_date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            LocalDate end_date = startDate.plusDays(numdaystour - 1);
+            LocalDate endDate = startDate.plusDays(numdaystour - 1);
             System.out.print("Input tour status: ");
             int status = s.nextInt();
-            insertTour(tour_code, tour_name, location, price, numdaystour, startDate.toString(), end_date.toString(), status);
+            insertTour(tour_code, tour_name, location, price, numdaystour, startDate.toString(), endDate.toString(), status);
         }
     }
 
@@ -83,22 +84,54 @@ public class Tour {
         try {
             // Thiết lập kết nối đến database
             connection = DriverManager.getConnection(connect, username, password);
-            Statement statement = connection.createStatement();
+
+            // Hiển thị danh sách
             showTour();
+
+            // Chọn id muốn sửa
             System.out.print("Enter tour id you want to edit: ");
             int edit_tour = s.nextInt();
-            ResultSet rs = statement.executeQuery("SELECT * FROM tours WHERE tour_code = " + edit_tour);
-            while (rs.next()) {
-                System.out.println(
-                        rs.getInt(1)
-                                + " " + rs.getString(2)
-                                + " " + rs.getString(3)
-                                + " " + rs.getDouble(4)
-                                + " " + rs.getInt(5)
-                                + " " + rs.getDate(6)
-                                + " " + rs.getDate(7)
-                                + " " + rs.getInt(8)
-                );
+            s.nextLine();
+
+            // Nhập thông tin mới
+            System.out.print("Input tour name: ");
+            String new_tour_name = s.nextLine();
+            System.out.print("Input tour location: ");
+            String new_location = s.nextLine();
+            System.out.print("Input tour price: ");
+            double new_price = s.nextDouble();
+            System.out.print("Input number of days in tour: ");
+            int new_numdaystour = s.nextInt();
+            s.nextLine();
+            System.out.print("Input tour start date (yyyy-mm-dd): ");
+            String new_start_date = s.nextLine();
+            LocalDate new_startDate = LocalDate.parse(new_start_date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            LocalDate new_endDate = new_startDate.plusDays(new_numdaystour - 1);
+            System.out.print("Input tour status: ");
+            int new_status = s.nextInt();
+
+            // Câu lệnh SQL
+            String sql = "UPDATE tours SET tour_name = ?, location = ?, price = ?, numdaystour = ?, start_date = ?, end_date = ?, status = ? WHERE tour_code = " + edit_tour;
+
+            // Cập nhật dữ liệu trong database
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, new_tour_name);
+            statement.setString(2, new_location);
+            statement.setDouble(3, new_price);
+            statement.setInt(4, new_numdaystour);
+            statement.setString(5, new_startDate.toString());
+            statement.setString(6, new_endDate.toString());
+            statement.setInt(7, new_status);
+
+            // Thực thi UPDATE
+            int rows_affected = statement.executeUpdate();
+
+            // Kiểm tra kết quả
+            if (rows_affected > 0) {
+                System.out.println("Update completed!");
+            } else {
+                System.out.println("Cannot find any tour with id: " + edit_tour);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,7 +149,7 @@ public class Tour {
 
             System.out.print("Enter tour id you want to delete: ");
             int del_tour = s.nextInt();
-            String sql = ("DELETE FROM tours WHERE tour_code = ?");
+            String sql = "DELETE FROM tours WHERE tour_code = ?";
             statement = connection.prepareCall(sql);
             statement.setInt(1, del_tour);
             statement.execute();
@@ -129,7 +162,7 @@ public class Tour {
 
     // Hiển thị
     public void showTour() {
-        System.out.println("===== SHOW TOUR =====");
+        System.out.println("===== TOUR LIST =====");
         try {
             connection = DriverManager.getConnection(connect, username, password);
             Statement statement = connection.createStatement();
