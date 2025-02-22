@@ -1,9 +1,4 @@
 package org;
-
-import com.mysql.cj.jdbc.StatementWrapper;
-import com.mysql.jdbc.Driver;
-
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -32,14 +27,14 @@ public class Tour {
 
     // Thực hiện truy vấn thêm dữ liệu
     // Thực hiện truy vấn
-    public void insertTour(int tour_code, String tour_name, String location, double price, int numdaystour, String start_date, String end_date, int status) {
+    public void insertTour(int tour_code, String tour_name, String location, int price, int numdaystour, String start_date, String end_date, int status) {
         String sql = "INSERT INTO tours VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, tour_code);
             statement.setString(2, tour_name);
             statement.setString(3, location);
-            statement.setDouble(4, price);
+            statement.setInt(4, price);
             statement.setInt(5, numdaystour);
             statement.setString(6, start_date);
             statement.setString(7, end_date);
@@ -66,7 +61,7 @@ public class Tour {
             System.out.print("Input tour location: ");
             String location = s.nextLine();
             System.out.print("Input tour price: ");
-            double price = s.nextDouble();
+            int price = s.nextInt();
             System.out.print("Input number of days in tour: ");
             int numdaystour = s.nextInt();
             s.nextLine();
@@ -101,7 +96,7 @@ public class Tour {
             System.out.print("Input tour location: ");
             String new_location = s.nextLine();
             System.out.print("Input tour price: ");
-            double new_price = s.nextDouble();
+            int new_price = s.nextInt();
             System.out.print("Input number of days in tour: ");
             int new_numdaystour = s.nextInt();
             s.nextLine();
@@ -117,10 +112,9 @@ public class Tour {
 
             // Cập nhật dữ liệu trong database
             PreparedStatement ps = connection.prepareStatement(sql);
-
             ps.setString(1, new_tour_name);
             ps.setString(2, new_location);
-            ps.setDouble(3, new_price);
+            ps.setInt(3, new_price);
             ps.setInt(4, new_numdaystour);
             ps.setString(5, new_startDate.toString());
             ps.setString(6, new_endDate.toString());
@@ -172,13 +166,13 @@ public class Tour {
             while (rs.next()) {
                 System.out.println(
                         rs.getInt(1)
-                                + " " + rs.getString(2)
-                                + " " + rs.getString(3)
-                                + " " + rs.getDouble(4)
-                                + " " + rs.getInt(5)
-                                + " " + rs.getDate(6)
-                                + " " + rs.getDate(7)
-                                + " " + rs.getInt(8)
+                                + " | " + rs.getString(2)
+                                + " | " + rs.getString(3)
+                                + " | " + rs.getInt(4)
+                                + " | " + rs.getInt(5)
+                                + " | " + rs.getDate(6)
+                                + " | " + rs.getDate(7)
+                                + " | " + rs.getInt(8)
                 );
             }
         } catch (Exception e) {
@@ -209,13 +203,13 @@ public class Tour {
                 hasResults = true;
                 System.out.println(
                         rs.getInt(1)
-                                + " " + rs.getString(2)
-                                + " " + rs.getString(3)
-                                + " " + rs.getDouble(4)
-                                + " " + rs.getInt(5)
-                                + " " + rs.getDate(6)
-                                + " " + rs.getDate(7)
-                                + " " + rs.getInt(8)
+                                + " | " + rs.getString(2)
+                                + " | " + rs.getString(3)
+                                + " | " + rs.getInt(4)
+                                + " | " + rs.getInt(5)
+                                + " | " + rs.getDate(6)
+                                + " | " + rs.getDate(7)
+                                + " | " + rs.getInt(8)
                 );
             }
 
@@ -251,13 +245,13 @@ public class Tour {
                 hasResults = true;
                 System.out.println(
                         rs.getInt(1)
-                                + " " + rs.getString(2)
-                                + " " + rs.getString(3)
-                                + " " + rs.getDouble(4)
-                                + " " + rs.getInt(5)
-                                + " " + rs.getDate(6)
-                                + " " + rs.getDate(7)
-                                + " " + rs.getInt(8)
+                                + " | " + rs.getString(2)
+                                + " | " + rs.getString(3)
+                                + " | " + rs.getInt(4)
+                                + " | " + rs.getInt(5)
+                                + " | " + rs.getDate(6)
+                                + " | " + rs.getDate(7)
+                                + " | " + rs.getInt(8)
                 );
             }
 
@@ -277,14 +271,14 @@ public class Tour {
             connection = DriverManager.getConnection(connect, username, password);
 
             System.out.print("Input tour price: ");
-            double filter_price = s.nextDouble();
+            int filter_price = s.nextInt();
 
             String sql = "SELECT * FROM tours WHERE price LIKE ?";
 
             PreparedStatement ps = connection.prepareStatement(sql);
 
             String search_pattern = "%";
-            ps.setDouble(1, filter_price);
+            ps.setInt(1, filter_price);
             ResultSet rs = ps.executeQuery();
 
             boolean hasResults = false;
@@ -293,13 +287,13 @@ public class Tour {
                 hasResults = true;
                 System.out.println(
                         rs.getInt(1)
-                                + " " + rs.getString(2)
-                                + " " + rs.getString(3)
-                                + " " + rs.getDouble(4)
-                                + " " + rs.getInt(5)
-                                + " " + rs.getDate(6)
-                                + " " + rs.getDate(7)
-                                + " " + rs.getInt(8)
+                                + " | " + rs.getString(2)
+                                + " | " + rs.getString(3)
+                                + " | " + rs.getInt(4)
+                                + " | " + rs.getInt(5)
+                                + " | " + rs.getDate(6)
+                                + " | " + rs.getDate(7)
+                                + " | " + rs.getInt(8)
                 );
             }
 
@@ -325,13 +319,13 @@ public class Tour {
                 hasResults = true;
                 System.out.println(
                         rs.getInt(1)
-                                + " " + rs.getString(2)
-                                + " " + rs.getString(3)
-                                + " " + rs.getDouble(4)
-                                + " " + rs.getInt(5)
-                                + " " + rs.getDate(6)
-                                + " " + rs.getDate(7)
-                                + " " + rs.getInt(8)
+                                + " | " + rs.getString(2)
+                                + " | " + rs.getString(3)
+                                + " | " + rs.getInt(4)
+                                + " | " + rs.getInt(5)
+                                + " | " + rs.getDate(6)
+                                + " | " + rs.getDate(7)
+                                + " | " + rs.getInt(8)
                 );
             }
 
